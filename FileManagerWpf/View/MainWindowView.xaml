@@ -3,28 +3,148 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FileManagerWpf"
+        xmlns:vm="clr-namespace:FileManagerWpf.ViewModel"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
+        MinHeight="320"
+        MinWidth="640"
         Title="File Manager 1.0.0" Height="450" Width="800">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="2">
+        <Grid Row="0" Background="#F0F0F0">
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="ArrowCircleOutlineLeft" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="ArrowCircleOutlineRight" Foreground="ForestGreen"/>
+                </Button>
+
+                <Border Background="Gray" Width="1" Margin="15,5" />
+
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="FolderOutline" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="FileOutline" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="ICursor" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="Copy" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="Exchange" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="FileZipOutline" Foreground="ForestGreen"/>
+                </Button>
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="Trash" Foreground="ForestGreen"/>
+                </Button>
+
+                <Border Background="Gray" Width="1" Margin="15,5" />
+
+                <Button Margin="2" Padding="0 2" Width="35">
+                    <fa:FontAwesome FontSize="24" Icon="Question" Foreground="ForestGreen"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ListViewItem Grid.Column="0"/>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ComboBox Grid.Row="0" SelectedIndex="0" VerticalAlignment="Top" >
+                    <TextBlock>C:\</TextBlock>
+                    <TextBlock>D:\</TextBlock>
+                </ComboBox>
+                <DataGrid Grid.Row="1" 
+                    BorderThickness="2"
+                    BorderBrush="LightGray"
+                    VerticalGridLinesBrush="WhiteSmoke"
+                    HorizontalGridLinesBrush="WhiteSmoke"
+                    IsReadOnly="True"
+                    HeadersVisibility="Column"
+                    AutoGenerateColumns="False"
+                    ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                        <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                        <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            
             <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch" />
-            <ListViewItem Grid.Column="2"/>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ComboBox Grid.Row="0" SelectedIndex="0" VerticalAlignment="Top" >
+                    <TextBlock>C:\</TextBlock>
+                    <TextBlock>D:\</TextBlock>
+                </ComboBox>
+                <DataGrid Grid.Row="1" 
+                          BorderThickness="2"
+                          BorderBrush="ForestGreen"
+                          VerticalGridLinesBrush="WhiteSmoke"
+                          HorizontalGridLinesBrush="WhiteSmoke"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          AutoGenerateColumns="False"
+                          ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                        <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                        <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
+        <Grid Row="2" Background="#F0F0F0">
+            <StackPanel Orientation="Horizontal">
+                <Label  Padding="3">Tab: 2</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">Items: 3</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F3 View</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F4 Edit</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F5 Copy</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F6 Move</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F7 New Folder</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F8 Delete</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">Alt+F4 Exit</Label>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
