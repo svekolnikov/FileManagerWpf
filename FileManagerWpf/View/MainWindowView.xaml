@@ -8,7 +8,9 @@
         mc:Ignorable="d"
         MinHeight="320"
         MinWidth="640"
-        Title="File Manager 1.0.0" Height="450" Width="800">
+        Height="320"
+        Width="640"
+        Title="File Manager 1.0.0">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -67,69 +69,101 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <ComboBox Grid.Row="0" SelectedIndex="0" VerticalAlignment="Top" >
-                    <TextBlock>C:\</TextBlock>
-                    <TextBlock>D:\</TextBlock>
-                </ComboBox>
-                <DataGrid Grid.Row="1" 
-                    BorderThickness="2"
-                    BorderBrush="LightGray"
-                    VerticalGridLinesBrush="WhiteSmoke"
-                    HorizontalGridLinesBrush="WhiteSmoke"
-                    IsReadOnly="True"
-                    HeadersVisibility="Column"
-                    AutoGenerateColumns="False"
-                    ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
-                >
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
-                        <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                        <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Border BorderThickness="2" BorderBrush="LightGray">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                  Background="#F0F0F0"
+                                  ItemsSource="{Binding LeftItems}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="C"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBox Grid.Row="1" Text="C:/"/>
+                        <DataGrid Grid.Row="2" 
+                                  VerticalGridLinesBrush="WhiteSmoke"
+                                  HorizontalGridLinesBrush="WhiteSmoke"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                        >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
             </Grid>
             
             <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <ComboBox Grid.Row="0" SelectedIndex="0" VerticalAlignment="Top" >
-                    <TextBlock>C:\</TextBlock>
-                    <TextBlock>D:\</TextBlock>
-                </ComboBox>
-                <DataGrid Grid.Row="1" 
-                          BorderThickness="2"
-                          BorderBrush="ForestGreen"
-                          VerticalGridLinesBrush="WhiteSmoke"
-                          HorizontalGridLinesBrush="WhiteSmoke"
-                          IsReadOnly="True"
-                          HeadersVisibility="Column"
-                          AutoGenerateColumns="False"
-                          ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
-                >
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
-                        <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                        <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Border BorderThickness="2" BorderBrush="LightGray">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                  Background="#F0F0F0"
+                                  ItemsSource="{Binding LeftItems}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="C"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBox Grid.Row="1" Text="C:/"/>
+                        <DataGrid Grid.Row="2" 
+                                  VerticalGridLinesBrush="WhiteSmoke"
+                                  HorizontalGridLinesBrush="WhiteSmoke"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                        >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
         <Grid Row="2" Background="#F0F0F0">
             <StackPanel Orientation="Horizontal">
-                <Label  Padding="3">Tab: 2</Label>
-                <Border Background="Gray" Width="1" Margin="5,5" />
-                <Label  Padding="3">Items: 3</Label>
+                <Label  Padding="3">Selected: 3</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F3 View</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
