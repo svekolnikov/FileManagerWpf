@@ -1,6 +1,6 @@
 ﻿namespace FileManagerWpf.Model
 {
-    internal class ListItem
+    public class TabItem
     {
         public string Name { get; set; }
         public string Ext { get; set; }

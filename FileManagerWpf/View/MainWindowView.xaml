@@ -11,9 +11,19 @@
         Height="320"
         Width="640"
         Title="File Manager 1.0.0">
+
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,41 +33,41 @@
 
         <Grid Row="0" Background="#F0F0F0">
             <StackPanel Orientation="Horizontal">
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="ArrowCircleOutlineLeft" Foreground="ForestGreen"/>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding GoBackCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ArrowCircleOutlineLeft"/>
                 </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="ArrowCircleOutlineRight" Foreground="ForestGreen"/>
-                </Button>
-
-                <Border Background="Gray" Width="1" Margin="15,5" />
-
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="FolderOutline" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="FileOutline" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="ICursor" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="Copy" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="Exchange" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="FileZipOutline" Foreground="ForestGreen"/>
-                </Button>
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="Trash" Foreground="ForestGreen"/>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding GoForwardCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ArrowCircleOutlineRight"/>
                 </Button>
 
                 <Border Background="Gray" Width="1" Margin="15,5" />
 
-                <Button Margin="2" Padding="0 2" Width="35">
-                    <fa:FontAwesome FontSize="24" Icon="Question" Foreground="ForestGreen"/>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CreateNewFolderCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FolderOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CreateNewFileCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FileOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding RenameCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ICursor"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CopyCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Copy"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding MoveCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Exchange"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding PackToArchiveCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FileZipOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding RemoveCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Trash"/>
+                </Button>
+
+                <Border Background="Gray" Width="1" Margin="15,5" />
+
+                <Button Style="{StaticResource PanelButton}" Command="{Binding QuestionCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Question"/>
                 </Button>
             </StackPanel>
         </Grid>
@@ -69,96 +79,93 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <Border BorderThickness="2" BorderBrush="LightGray">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <ListView Grid.Row="0"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="0"
                                   Background="#F0F0F0"
-                                  ItemsSource="{Binding LeftItems}">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
-                                        <Label Padding="2 0" FontSize="10" Content="C"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <TextBox Grid.Row="1" Text="C:/"/>
-                        <DataGrid Grid.Row="2" 
+                                  ItemsSource="{Binding LeftItems.Drives}">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                    <Label Padding="2 0" FontSize="10" Content="{Binding Letter}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBox Grid.Row="1" Text="{Binding LeftItems.Navigation}"/>
+                    <DataGrid Grid.Row="2" 
                                   VerticalGridLinesBrush="WhiteSmoke"
                                   HorizontalGridLinesBrush="WhiteSmoke"
                                   IsReadOnly="True"
                                   HeadersVisibility="Column"
                                   AutoGenerateColumns="False"
-                                  ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding LeftItems.Items, UpdateSourceTrigger=PropertyChanged}"
                         >
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                                <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
-                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                                <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
-                </Border>
+                        
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                            <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
             
             <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
-                <Border BorderThickness="2" BorderBrush="LightGray">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <ListView Grid.Row="0"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <ListView Grid.Row="0"
                                   Background="#F0F0F0"
-                                  ItemsSource="{Binding LeftItems}">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
-                                        <Label Padding="2 0" FontSize="10" Content="C"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <TextBox Grid.Row="1" Text="C:/"/>
-                        <DataGrid Grid.Row="2" 
+                                  ItemsSource="{Binding LeftItems.Drives}">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                    <Label Padding="2 0" FontSize="10" Content="{Binding Letter}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBox Grid.Row="1" Text="{Binding LeftItems.Navigation}"/>
+                    <DataGrid Grid.Row="2" 
                                   VerticalGridLinesBrush="WhiteSmoke"
                                   HorizontalGridLinesBrush="WhiteSmoke"
                                   IsReadOnly="True"
                                   HeadersVisibility="Column"
                                   AutoGenerateColumns="False"
-                                  ItemsSource="{Binding LeftItems, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding LeftItems.Items, UpdateSourceTrigger=PropertyChanged}"
                         >
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                                <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
-                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                                <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
-                </Border>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                            <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
         </Grid>
         <Grid Row="2" Background="#F0F0F0">
