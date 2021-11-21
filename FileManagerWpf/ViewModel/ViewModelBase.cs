@@ -4,7 +4,7 @@ using FileManagerWpf.Annotations;
 
 namespace FileManagerWpf.ViewModel
 {
-    internal class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -2,10 +2,10 @@
 {
     public class Drive
     {
-        public string Letter { get; set; }
+        public string VolumeLabel { get; set; }
         public string Name { get; set; }
-        public long TotalSpace { get; set; }
-        public long FreeSpace { get; set; }
+        public long TotalSize { get; set; }
+        public long TotalFreeSpace { get; set; }
         public long UsedSpace { get; set; }
     }
 }

@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:FileManagerWpf.ViewModel"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         MinHeight="320"
         MinWidth="640"
-        Height="320"
-        Width="640"
+        Height="600"
+        Width="800"
         Title="File Manager 1.0.0">
 
     <Window.DataContext>
@@ -87,7 +88,7 @@
                     </Grid.RowDefinitions>
                     <ListView Grid.Row="0"
                                   Background="#F0F0F0"
-                                  ItemsSource="{Binding LeftItems.Drives}">
+                                  ItemsSource="{Binding LeftTab.Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -97,27 +98,55 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
-                                    <Label Padding="2 0" FontSize="10" Content="{Binding Letter}"/>
+                                    <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <TextBox Grid.Row="1" Text="{Binding LeftItems.Navigation}"/>
-                    <DataGrid Grid.Row="2" 
-                                  VerticalGridLinesBrush="WhiteSmoke"
-                                  HorizontalGridLinesBrush="WhiteSmoke"
-                                  IsReadOnly="True"
-                                  HeadersVisibility="Column"
-                                  AutoGenerateColumns="False"
-                                  ItemsSource="{Binding LeftItems.Items, UpdateSourceTrigger=PropertyChanged}"
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding LeftTab.Path, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Column="1" Command="{Binding GoToPathCommand}">
+                            <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                        </Button>
+                    </Grid>                    
+                    <DataGrid 
+                        Grid.Row="2" 
+                        VerticalGridLinesBrush="WhiteSmoke"
+                        HorizontalGridLinesBrush="WhiteSmoke"
+                        HeadersVisibility="Column"
+                        AutoGenerateColumns="False"
+                        SelectionMode="Extended"  
+                        SelectionUnit="FullRow"
+                        IsReadOnly="True"
+                        SnapsToDevicePixels="True"
+                        Name="grid1"
+                        ItemsSource="{Binding LeftTab.Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         >
-                        
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                            <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
                             <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                            <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
                         </DataGrid.Columns>
+
+                        <DataGrid.InputBindings>
+                                <MouseBinding 
+                                    Gesture="LeftDoubleClick" 
+                                    Command="{Binding OpenCommand}" 
+                                    CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
+                        </DataGrid.InputBindings>
+
+                        <i:Interaction.Triggers>                            
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                           CommandParameter="{Binding SelectedItems, ElementName=grid1}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </DataGrid>
                 </Grid>
             </Grid>
@@ -134,7 +163,7 @@
                     </Grid.RowDefinitions>
                     <ListView Grid.Row="0"
                                   Background="#F0F0F0"
-                                  ItemsSource="{Binding LeftItems.Drives}">
+                                  ItemsSource="{Binding LeftTab.Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -144,33 +173,58 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
-                                    <Label Padding="2 0" FontSize="10" Content="{Binding Letter}"/>
+                                    <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <TextBox Grid.Row="1" Text="{Binding LeftItems.Navigation}"/>
-                    <DataGrid Grid.Row="2" 
-                                  VerticalGridLinesBrush="WhiteSmoke"
-                                  HorizontalGridLinesBrush="WhiteSmoke"
-                                  IsReadOnly="True"
-                                  HeadersVisibility="Column"
-                                  AutoGenerateColumns="False"
-                                  ItemsSource="{Binding LeftItems.Items, UpdateSourceTrigger=PropertyChanged}"
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding LeftTab.Path, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Column="1" Command="{Binding GoToPath}">
+                            <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                        </Button>
+                    </Grid>
+                    <DataGrid 
+                        Grid.Row="2" 
+                        VerticalGridLinesBrush="WhiteSmoke"
+                        HorizontalGridLinesBrush="WhiteSmoke"
+                        HeadersVisibility="Column"
+                        AutoGenerateColumns="False"
+                        SelectionMode="Extended"  
+                        SelectionUnit="FullRow"
+                        IsReadOnly="True"
+                        SnapsToDevicePixels="True"
+                        Name="grid2"
+                        ItemsSource="{Binding LeftTab.Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         >
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Ext" MinWidth="30" Width="30" Binding="{Binding Ext}"/>
+                            <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
                             <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                            <DataGridTextColumn Header="Date" MinWidth="100" Width="100" Binding="{Binding Date}"/>
+                            <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
                         </DataGrid.Columns>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                           CommandParameter="{Binding SelectedItems, ElementName=grid}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </DataGrid>
                 </Grid>
             </Grid>
         </Grid>
         <Grid Row="2" Background="#F0F0F0">
             <StackPanel Orientation="Horizontal">
-                <Label  Padding="3">Selected: 3</Label>
+                <Label  Padding="3" Content="Selected:"/>                
+                <Label  Padding="3" Content="{Binding LeftTab.SelectedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label  Padding="3" Content="-"/>
+                <Label  Padding="3" Content="{Binding LeftTab.SelectedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F3 View</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
