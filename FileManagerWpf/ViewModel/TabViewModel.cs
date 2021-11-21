@@ -6,7 +6,7 @@ namespace FileManagerWpf.ViewModel
 {
     public class TabViewModel : ViewModelBase
     {
-        private string _path = @"C:\\";
+        private string _path = @"D:\Test";
         private int _selected;
 
         public ObservableCollection<Drive> Drives { get; set; } = new ObservableCollection<Drive>();

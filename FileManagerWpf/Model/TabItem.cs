@@ -4,7 +4,7 @@ namespace FileManagerWpf.Model
 {
     public enum TableEntityType
     {
-        DIR,
+        Dir,
         File
     }
 

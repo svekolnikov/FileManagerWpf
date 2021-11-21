@@ -5,42 +5,35 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using FileManagerWpf.Extensions;
 
 namespace FileManagerWpf.Services
 {
     public class FileManager
     {
         private readonly TabViewModel _tabViewModel;
+        private readonly FileSystemWatcher _watcher;
         public FileManager(TabViewModel tabViewModel)
         {
+            
             _tabViewModel = tabViewModel;
             UpdateDriveList(_tabViewModel.Drives);
+            
+            _watcher = new FileSystemWatcher(_tabViewModel.Path);
         }
 
         public void GoToPath(string path)
         {
             if (Directory.Exists(path))
             {
-                _tabViewModel.Path = path;
-                _tabViewModel.Items.Clear();
-
-                //directories
-                foreach (var item in GetSubDirectories(path))
-                {
-                    _tabViewModel.Items.Add(item);
-                }
-                //files 
-                foreach (var item in GetFiles(path))
-                {
-                    _tabViewModel.Items.Add(item);
-                }
-                
+                AddWatcher(path);
+                UpdateItemsList(_tabViewModel.Items, path);
             }
         }
 
         public void Open(TabItem item)
         {
-            if (item.Type == TableEntityType.DIR)
+            if (item.Type == TableEntityType.Dir)
             {
                 GoToPath(item.Path);
             }
@@ -71,6 +64,22 @@ namespace FileManagerWpf.Services
             }
         }
 
+        private void UpdateItemsList(ObservableCollection<TabItem> itemsCollection, string path)
+        {
+            itemsCollection.ClearOnUI();
+
+            //directories
+            foreach (var item in GetSubDirectories(path))
+            {
+                _tabViewModel.Items.AddOnUI(item);
+            }
+            //files 
+            foreach (var item in GetFiles(path))
+            {
+                _tabViewModel.Items.AddOnUI(item);
+            }
+        }
+
         private IEnumerable<TabItem> GetSubDirectories(string path)
         {
             var subDirs = Directory.GetDirectories(path);
@@ -86,7 +95,7 @@ namespace FileManagerWpf.Services
                     Size = "",
                     Name = di.Name,
                     Ext = "<DIR>",
-                    Type = TableEntityType.DIR,
+                    Type = TableEntityType.Dir,
                     Date = di.CreationTime.ToString(CultureInfo.CurrentCulture)
                 };
             }
@@ -109,6 +118,31 @@ namespace FileManagerWpf.Services
                     Date = fi.CreationTime.ToString(CultureInfo.CurrentCulture)
                 };
             }
+        }
+
+        private void AddWatcher(string path)
+        {
+            _watcher.Path = path;
+            _watcher.NotifyFilter = NotifyFilters.Attributes
+                                   | NotifyFilters.CreationTime
+                                   | NotifyFilters.DirectoryName
+                                   | NotifyFilters.FileName
+                                   | NotifyFilters.LastAccess
+                                   | NotifyFilters.LastWrite
+                                   | NotifyFilters.Security
+                                   | NotifyFilters.Size;
+            
+            _watcher.Changed += OnChanged;
+            _watcher.Created += OnChanged;
+            _watcher.Deleted += OnChanged;
+            _watcher.Renamed += OnChanged;
+            _watcher.Filter = "*.*";
+            _watcher.EnableRaisingEvents = true;
+        }
+        
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            UpdateItemsList(_tabViewModel.Items, _watcher.Path);
         }
     }
 }

@@ -10,19 +10,18 @@ namespace FileManagerWpf.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {
-        private List<TabItem> _selectedItems = new List<TabItem>();
-        private TabViewModel _leftTabViewModel;
-        private FileManager _leftTabFileManager;
-        private TabViewModel _rightTabViewModel;
-        private FileManager _rightTabFileManager;
+        private readonly TabViewModel _tab1ViewModel;
+        private FileManager _tab1FileManager;
+        private readonly TabViewModel _tab2ViewModel;
+        private FileManager _tab2FileManager;
 
         public MainWindowViewModel()
         {
-            _leftTabViewModel = new TabViewModel();
-            _leftTabFileManager = new FileManager(_leftTabViewModel);
+            _tab1ViewModel = new TabViewModel();
+            _tab1FileManager = new FileManager(_tab1ViewModel);
 
-            _rightTabViewModel = new TabViewModel();
-            _rightTabFileManager = new FileManager(_rightTabViewModel);
+            _tab2ViewModel = new TabViewModel();
+            _tab2FileManager = new FileManager(_tab2ViewModel);
 
             //Commands
             OpenCommand = new RelayCommand(Open);
@@ -41,7 +40,8 @@ namespace FileManagerWpf.ViewModel
             QuestionCommand = new RelayCommand(Question);
         }
 
-        public TabViewModel LeftTab { get => _leftTabViewModel; }
+        public TabViewModel Tab1 => _tab1ViewModel;
+        public TabViewModel Tab2 => _tab2ViewModel;
 
         #region Commands
         public ICommand OpenCommand { get; set; }
@@ -53,14 +53,14 @@ namespace FileManagerWpf.ViewModel
         public ICommand GoToPathCommand { get; set; }
         public void GoToPath(object obj)
         {
-            _leftTabFileManager.GoToPath(LeftTab.Path);
+            _tab1FileManager.GoToPath(Tab1.Path);
         }
         public ICommand SelectionChangedCommand { get; set; }
         public void SelectionChanged(object obj)
         {
-            _selectedItems = ((IList)obj).Cast<TabItem>().ToList();
+            //_selectedItems = ((IList)obj).Cast<TabItem>().ToList();
 
-            _leftTabViewModel.SelectedCount = _selectedItems.Count;
+            //_tab1ViewModel.SelectedCount = _selectedItems.Count;
         }
 
 
