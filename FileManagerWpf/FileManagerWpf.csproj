@@ -4,11 +4,13 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>doggy_cropped.ico</ApplicationIcon>
+    <ApplicationIcon>doggy.ico</ApplicationIcon>
+    <StartupObject></StartupObject>
+    <AssemblyName>FileManager</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="doggy_cropped.ico" />
+    <Content Include="doggy.ico" />
   </ItemGroup>
 
   <ItemGroup>

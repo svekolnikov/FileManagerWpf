@@ -80,89 +80,187 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <ListView Grid.Row="0"
-                                  Background="#F0F0F0"
-                                  ItemsSource="{Binding Tab1.Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
-                                    <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding Tab1.Path, UpdateSourceTrigger=PropertyChanged}"/>
-                        <Button Grid.Column="1" Command="{Binding GoToPathCommand}">
-                            <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
-                        </Button>
-                    </Grid>                    
-                    <DataGrid 
-                        Grid.Row="2" 
-                        VerticalGridLinesBrush="WhiteSmoke"
-                        HorizontalGridLinesBrush="WhiteSmoke"
-                        HeadersVisibility="Column"
-                        AutoGenerateColumns="False"
-                        SelectionMode="Extended"  
-                        SelectionUnit="FullRow"
-                        IsReadOnly="True"
-                        SnapsToDevicePixels="True"
-                        Name="grid1"
-                        ItemsSource="{Binding Tab1.Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        >
+                <Border BorderThickness="2" 
+                        BorderBrush="{Binding 
+                    Tabs[0].BorderBrush, 
+                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                      Name="drives1"
+                                      Background="#F0F0F0"
+                                      SelectedItem="{Binding Tabs[0].SelectedDrive}"
+                                      ItemsSource="{Binding Tabs[0].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding GoToDriveCommand}" 
+                                                           CommandParameter="{Binding ElementName=drives1, Path=Name}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListView>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[0].Path, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" 
+                                    Command="{Binding GoToPathCommand}"
+                                    CommandParameter="{Binding ElementName=grid1, Path=Name}"
+                                    >
+                                <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                            </Button>
+                        </Grid>                    
+                        <DataGrid 
+                            Grid.Row="2" 
+                            VerticalGridLinesBrush="WhiteSmoke"
+                            HorizontalGridLinesBrush="WhiteSmoke"
+                            HeadersVisibility="Column"
+                            AutoGenerateColumns="False"
+                            SelectionMode="Extended"  
+                            SelectionUnit="FullRow"
+                            IsReadOnly="True"
+                            SnapsToDevicePixels="True"
+                            Name="grid1"
+                            ItemsSource="{Binding Tabs[0].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            >
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
-                            <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
-                            <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
-                        </DataGrid.Columns>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
 
-                        <DataGrid.InputBindings>
-                                <MouseBinding 
-                                    Gesture="LeftDoubleClick" 
-                                    Command="{Binding OpenCommand}" 
-                                    CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
-                        </DataGrid.InputBindings>
+                            <DataGrid.InputBindings>
+                                    <MouseBinding 
+                                        Gesture="LeftDoubleClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
+                                    <MouseBinding 
+                                        Gesture="LeftClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
+                            </DataGrid.InputBindings>
 
-                        <i:Interaction.Triggers>                            
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
-                                           CommandParameter="{Binding SelectedItems, ElementName=grid1}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </DataGrid>
-                </Grid>
+                            <i:Interaction.Triggers>                            
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                               CommandParameter="{Binding SelectedItems, ElementName=grid1}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </DataGrid>
+                    </Grid>
+                </Border>
             </Grid>
             
             <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                           HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
+                <Border BorderThickness="2" 
+                        BorderBrush="{Binding 
+                    Tabs[1].BorderBrush, 
+                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                      Background="#F0F0F0"
+                                      ItemsSource="{Binding Tabs[1].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[1].Path, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Command="{Binding GoToPathCommand}">
+                                <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                            </Button>
+                        </Grid>
+                        <DataGrid 
+                            Grid.Row="2" 
+                            VerticalGridLinesBrush="WhiteSmoke"
+                            HorizontalGridLinesBrush="WhiteSmoke"
+                            HeadersVisibility="Column"
+                            AutoGenerateColumns="False"
+                            SelectionMode="Extended"  
+                            SelectionUnit="FullRow"
+                            IsReadOnly="True"
+                            SnapsToDevicePixels="True"
+                            Name="grid2"
+                            ItemsSource="{Binding Tabs[1].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            >
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
+
+                            <DataGrid.InputBindings>
+                                <MouseBinding 
+                                        Gesture="LeftDoubleClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid2, Path=SelectedItem}" />
+                                <MouseBinding 
+                                        Gesture="LeftClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid2, Path=SelectedItem}" />
+                            </DataGrid.InputBindings>
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                               CommandParameter="{Binding SelectedItems, ElementName=grid2}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </DataGrid>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
         <Grid Row="2" Background="#F0F0F0">
             <StackPanel Orientation="Horizontal">
-                <Label  Padding="3" Content="Selected:"/>                
-                <Label  Padding="3" Content="{Binding LeftTab.SelectedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label  Padding="3" Content="Selected:"/>
+                <Label  Padding="3" Content="{Binding Tabs[0].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label  Padding="3" Content="-"/>
-                <Label  Padding="3" Content="{Binding LeftTab.SelectedCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label  Padding="3" Content="{Binding Tabs[1].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F3 View</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
@@ -180,4 +278,9 @@
             </StackPanel>
         </Grid>
     </Grid>
+
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding SwitchTabsCommand}"
+                    Gesture="F2" />
+    </Window.InputBindings>
 </Window>

@@ -1,30 +1,43 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace FileManagerWpf.Utility
+namespace FileManagerWpf.Commands
 {
-   public class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
-        private readonly Predicate<object> _canExecute;
-        private readonly Action<object> _execute;
+        private Action<object> _execute;
+        private Predicate<object> _canExecute;
+        private event EventHandler CanExecuteChangedInternal;
 
         public RelayCommand(Action<object> execute)
-            : this(execute, null)
+            : this(execute, DefaultCanExecute)
         {
         }
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            _execute = execute;
-            _canExecute = canExecute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                CommandManager.RequerySuggested += value;
+                CanExecuteChangedInternal += value;
+            }
+
+            remove
+            {
+                CommandManager.RequerySuggested -= value;
+                CanExecuteChangedInternal -= value;
+            }
         }
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecute == null)
-                return true;
-
-            return _canExecute(parameter);
+            return _canExecute != null && _canExecute(parameter);
         }
 
         public void Execute(object parameter)
@@ -32,11 +45,21 @@ namespace FileManagerWpf.Utility
             _execute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged;
-        public void RaiseCanExecuteChanged()
+        public void OnCanExecuteChanged()
         {
-            if (CanExecuteChanged != null)
-                CanExecuteChanged(this, EventArgs.Empty);
+            var handler = CanExecuteChangedInternal;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Destroy()
+        {
+            _canExecute = _ => false;
+            _execute = _ => { };
+        }
+
+        private static bool DefaultCanExecute(object parameter)
+        {
+            return true;
         }
     }
 }

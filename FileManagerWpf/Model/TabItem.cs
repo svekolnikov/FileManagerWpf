@@ -1,8 +1,8 @@
-﻿using FileManagerWpf.Services;
+﻿using FileManagerWpf.ViewModel;
 
 namespace FileManagerWpf.Model
 {
-    public enum TableEntityType
+    public enum EntityType
     {
         Dir,
         File
@@ -10,12 +10,12 @@ namespace FileManagerWpf.Model
 
     public class TabItem
     {
-        public FileManager FileManager { get; set; }
+        public TabViewModel TabViewModel { get; set; }
         public string Path { get; set; }
         public string Name { get; set; }
         public string Ext { get; set; }
         public string Size { get; set; }
         public string Date { get; set; }
-        public TableEntityType Type { get; set; }
+        public EntityType Type { get; set; }
     }
 }
