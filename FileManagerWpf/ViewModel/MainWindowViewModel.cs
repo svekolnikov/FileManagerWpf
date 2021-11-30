@@ -11,8 +11,7 @@ namespace FileManagerWpf.ViewModel
 {
     internal class MainWindowViewModel : ViewModelBase
     {
-        private bool _canGoBack;
-
+        private int _selectedTab = 0;
         public MainWindowViewModel()
         {
             Tabs = new List<TabViewModel>
@@ -29,7 +28,7 @@ namespace FileManagerWpf.ViewModel
             GoToDriveCommand = new RelayCommand(GoToDrive);
             GoToPathCommand = new RelayCommand(GoToPath);
 
-            GoBackCommand = new RelayCommand(GoBack,param => CanGoBack);
+            GoBackCommand = new RelayCommand(GoBack, param => CanGoBack);
             GoForwardCommand = new RelayCommand(GoForward, param => CanGoForward);
             CreateNewFolderCommand = new RelayCommand(CreateNewFolder);
             CreateNewFileCommand = new RelayCommand(CreateNewFile);
@@ -44,13 +43,15 @@ namespace FileManagerWpf.ViewModel
         }
 
         public List<TabViewModel> Tabs { get; }
-        
+
         #region Commands
         public ICommand SwitchTabsCommand { get; set; }
         public void SwitchTabs(object obj)
         {
             Tabs[0].IsActive = !Tabs[0].IsActive;
             Tabs[1].IsActive = !Tabs[1].IsActive;
+
+            _selectedTab = 1 - _selectedTab;
         }
         public ICommand DoubleClickCommand { get; set; }
         public void DoubleClick(object obj)
@@ -61,7 +62,7 @@ namespace FileManagerWpf.ViewModel
         public ICommand GoToDriveCommand { get; set; }
         public void GoToDrive(object obj)
         {
-            var drivesListName = (string) obj;
+            var drivesListName = (string)obj;
             if (drivesListName == "drives1")
             {
                 var path = Tabs[0].SelectedDrive.Path;
@@ -70,7 +71,7 @@ namespace FileManagerWpf.ViewModel
             else if (drivesListName == "drives2")
             {
                 var path = Tabs[1].SelectedDrive.Path;
-                Tabs[1].Open(path, Model.EntityType.Dir); 
+                Tabs[1].Open(path, Model.EntityType.Dir);
             }
         }
         public ICommand GoToPathCommand { get; set; }
@@ -103,16 +104,16 @@ namespace FileManagerWpf.ViewModel
             }
         }
         public ICommand GoBackCommand { get; set; }
-        public bool CanGoBack => Tabs[0].CanGoBack();
-        public bool CanGoForward => Tabs[0].CanGoForward();
+        public bool CanGoBack => Tabs[_selectedTab].CanGoBack();
+        public bool CanGoForward => Tabs[_selectedTab].CanGoForward();
         public void GoBack(object obj)
         {
-            Tabs[0].GoBack();
+            Tabs[_selectedTab].GoBack();
         }
         public ICommand GoForwardCommand { get; set; }
         public void GoForward(object obj)
         {
-            Tabs[0].GoForward();
+            Tabs[_selectedTab].GoForward();
         }
         public ICommand CreateNewFolderCommand { get; set; }
         public void CreateNewFolder(object obj)
