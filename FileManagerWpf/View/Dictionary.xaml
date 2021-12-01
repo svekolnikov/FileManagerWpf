@@ -2,15 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:fa="http://schemas.fontawesome.io/icons/">
 
+    <SolidColorBrush x:Key="MainColor" Color="ForestGreen" />
+    <SolidColorBrush x:Key="DirColor" Color="LightGoldenrodYellow" />
+    <SolidColorBrush x:Key="FileColor" Color="LightCyan" />
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="ForestGreen"/>
+    
     <Style x:Key="PanelButton" TargetType="Button">
-        <Setter Property="Margin" Value="2" />
-        <Setter Property="Width" Value="35" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="Width" Value="25" />
         <Setter Property="Padding" Value="0 2" />
     </Style>
 
     <Style x:Key="PanelIcon" TargetType="fa:FontAwesome">
-        <Setter Property="FontSize" Value="24" />
-        <Setter Property="Foreground" Value="ForestGreen" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="{StaticResource MainColor}" />
     </Style>
 
 

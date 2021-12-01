@@ -11,6 +11,7 @@
         MinWidth="640"
         Height="600"
         Width="800"
+        WindowStartupLocation="CenterScreen"
         Title="File Manager 1.0.0">
 
     <Window.DataContext>
@@ -58,17 +59,11 @@
                 <Button Style="{StaticResource PanelButton}" Command="{Binding MoveCommand}">
                     <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Exchange"/>
                 </Button>
-                <Button Style="{StaticResource PanelButton}" Command="{Binding PackToArchiveCommand}">
+                <Button Style="{StaticResource PanelButton}" Command="{Binding ZipCommand}">
                     <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FileZipOutline"/>
                 </Button>
                 <Button Style="{StaticResource PanelButton}" Command="{Binding RemoveCommand}">
                     <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Trash"/>
-                </Button>
-
-                <Border Background="Gray" Width="1" Margin="15,5" />
-
-                <Button Style="{StaticResource PanelButton}" Command="{Binding QuestionCommand}">
-                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Question"/>
                 </Button>
             </StackPanel>
         </Grid>
@@ -120,7 +115,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding Tabs[0].Path, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[0].PanelPath, UpdateSourceTrigger=PropertyChanged}"/>
                             <Button Grid.Column="1" 
                                     Command="{Binding GoToPathCommand}"
                                     CommandParameter="{Binding ElementName=grid1, Path=Name}"
@@ -141,6 +136,19 @@
                             Name="grid1"
                             ItemsSource="{Binding Tabs[0].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             >
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Dir">
+                                            <Setter Property="Background" Value="{StaticResource DirColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="File">
+                                            <Setter Property="Background" Value="{StaticResource FileColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
@@ -215,7 +223,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding Tabs[1].Path, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[1].PanelPath, UpdateSourceTrigger=PropertyChanged}"/>
                             <Button Grid.Column="1" 
                                     Command="{Binding GoToPathCommand}"
                                     CommandParameter="{Binding ElementName=grid2, Path=Name}"
@@ -236,6 +244,19 @@
                             Name="grid2"
                             ItemsSource="{Binding Tabs[1].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             >
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Dir">
+                                            <Setter Property="Background" Value="{StaticResource DirColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="File">
+                                            <Setter Property="Background" Value="{StaticResource FileColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
@@ -272,10 +293,13 @@
                 <Label  Padding="3" Content="{Binding Tabs[0].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label  Padding="3" Content="-"/>
                 <Label  Padding="3" Content="{Binding Tabs[1].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">` Switch Tab</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F2 Rename</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F3 View</Label>
-                <Border Background="Gray" Width="1" Margin="5,5" />
-                <Label  Padding="3">F4 Edit</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F5 Copy</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
@@ -292,6 +316,18 @@
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding SwitchTabsCommand}"
+                    Gesture="OemTilde" />
+        <KeyBinding Command="{Binding RenameCommand}"
                     Gesture="F2" />
+        <KeyBinding Command="{Binding ViewInfoCommand}"
+                    Gesture="F3" />
+        <KeyBinding Command="{Binding CopyCommand}"
+                    Gesture="F5" />
+        <KeyBinding Command="{Binding MoveCommand}"
+                    Gesture="F6" />
+        <KeyBinding Command="{Binding CreateNewFolderCommand}"
+                    Gesture="F7" />
+        <KeyBinding Command="{Binding RemoveCommand}"
+                    Gesture="F8" />
     </Window.InputBindings>
 </Window>
