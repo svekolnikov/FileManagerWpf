@@ -1,0 +1,333 @@
+﻿<Window x:Class="FileManagerWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:FileManagerWpf.ViewModel"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        mc:Ignorable="d"
+        MinHeight="320"
+        MinWidth="640"
+        Height="600"
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        Title="File Manager 1.0.0">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Grid Row="0" Background="#F0F0F0">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource PanelButton}" Command="{Binding GoBackCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ArrowCircleOutlineLeft"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding GoForwardCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ArrowCircleOutlineRight"/>
+                </Button>
+
+                <Border Background="Gray" Width="1" Margin="15,5" />
+
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CreateNewFolderCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FolderOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CreateNewFileCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FileOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding RenameCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="ICursor"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding CopyCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Copy"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding MoveCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Exchange"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding ZipCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="FileZipOutline"/>
+                </Button>
+                <Button Style="{StaticResource PanelButton}" Command="{Binding RemoveCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Trash"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Border BorderThickness="2" 
+                        BorderBrush="{Binding 
+                    Tabs[0].BorderBrush, 
+                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                      Name="drives1"
+                                      Background="#F0F0F0"
+                                      SelectedItem="{Binding Tabs[0].SelectedDriveBase}"
+                                      ItemsSource="{Binding Tabs[0].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding GoToDriveCommand}" 
+                                                           CommandParameter="{Binding ElementName=drives1, Path=Name}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListView>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[0].PanelPath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" 
+                                    Command="{Binding GoToPathCommand}"
+                                    CommandParameter="{Binding ElementName=grid1, Path=Name}"
+                                    >
+                                <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                            </Button>
+                        </Grid>                    
+                        <DataGrid 
+                            Grid.Row="2" 
+                            VerticalGridLinesBrush="WhiteSmoke"
+                            HorizontalGridLinesBrush="WhiteSmoke"
+                            HeadersVisibility="Column"
+                            AutoGenerateColumns="False"
+                            SelectionMode="Extended"  
+                            SelectionUnit="FullRow"
+                            IsReadOnly="True"
+                            SnapsToDevicePixels="True"
+                            Name="grid1"
+                            ItemsSource="{Binding Tabs[0].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            >
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Dir">
+                                            <Setter Property="Background" Value="{StaticResource DirColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="File">
+                                            <Setter Property="Background" Value="{StaticResource FileColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
+
+                            <DataGrid.InputBindings>
+                                    <MouseBinding 
+                                        Gesture="LeftDoubleClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
+                                    <MouseBinding 
+                                        Gesture="LeftClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid1, Path=SelectedItem}" />
+                            </DataGrid.InputBindings>
+
+                            <i:Interaction.Triggers>                            
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                               CommandParameter="{Binding SelectedItems, ElementName=grid1}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+            
+            <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
+                          HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+            <Grid Grid.Column="2">
+                <Border BorderThickness="2" 
+                        BorderBrush="{Binding 
+                    Tabs[1].BorderBrush, 
+                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0"
+                                      Name="drives2"
+                                      Background="#F0F0F0"
+                                      SelectedItem="{Binding Tabs[1].SelectedDriveBase}"
+                                      ItemsSource="{Binding Tabs[1].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <fa:FontAwesome FontSize="15" Padding="0" Icon="HddOutline" Foreground="Black"/>
+                                        <Label Padding="2 0" FontSize="10" Content="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding GoToDriveCommand}" 
+                                                           CommandParameter="{Binding ElementName=drives2, Path=Name}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListView>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Tabs[1].PanelPath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" 
+                                    Command="{Binding GoToPathCommand}"
+                                    CommandParameter="{Binding ElementName=grid2, Path=Name}"
+                                    >
+                                <fa:FontAwesome FontSize="15" Icon="LongArrowRight" Foreground="ForestGreen"/>
+                            </Button>
+                        </Grid>
+                        <DataGrid 
+                            Grid.Row="2" 
+                            VerticalGridLinesBrush="WhiteSmoke"
+                            HorizontalGridLinesBrush="WhiteSmoke"
+                            HeadersVisibility="Column"
+                            AutoGenerateColumns="False"
+                            SelectionMode="Extended"  
+                            SelectionUnit="FullRow"
+                            IsReadOnly="True"
+                            SnapsToDevicePixels="True"
+                            Name="grid2"
+                            ItemsSource="{Binding Tabs[1].Items, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            >
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Dir">
+                                            <Setter Property="Background" Value="{StaticResource DirColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="File">
+                                            <Setter Property="Background" Value="{StaticResource FileColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" MinWidth="100" Width="*" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Ext" MinWidth="45" Width="45" Binding="{Binding Ext}"/>
+                                <DataGridTextColumn Header="Size" MinWidth="50" Width="80" Binding="{Binding Size}"/>
+                                <DataGridTextColumn Header="Date" MinWidth="140" Width="140" Binding="{Binding Date}"/>
+                            </DataGrid.Columns>
+
+                            <DataGrid.InputBindings>
+                                <MouseBinding 
+                                        Gesture="LeftDoubleClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid2, Path=SelectedItem}" />
+                                <MouseBinding 
+                                        Gesture="LeftClick" 
+                                        Command="{Binding DoubleClickCommand}" 
+                                        CommandParameter="{Binding ElementName=grid2, Path=SelectedItem}" />
+                            </DataGrid.InputBindings>
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" 
+                                               CommandParameter="{Binding SelectedItems, ElementName=grid2}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+        <Grid Row="2" Background="#F0F0F0">
+            <StackPanel Orientation="Horizontal">
+                <Label  Padding="3" Content="Selected:"/>
+                <Label  Padding="3" Content="{Binding Tabs[0].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label  Padding="3" Content="-"/>
+                <Label  Padding="3" Content="{Binding Tabs[1].SelectedItems.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">` Switch Tab</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F2 Rename</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F3 Info</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F5 Copy</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F6 Move</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F7 New Folder</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">F8 Delete</Label>
+                <Border Background="Gray" Width="1" Margin="5,5" />
+                <Label  Padding="3">Alt+F4 Exit</Label>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding SwitchTabsCommand}"
+                    Gesture="OemTilde" />
+        <KeyBinding Command="{Binding RenameCommand}"
+                    Gesture="F2" />
+        <KeyBinding Command="{Binding ViewInfoCommand}"
+                    Gesture="F3" />
+        <KeyBinding Command="{Binding CopyCommand}"
+                    Gesture="F5" />
+        <KeyBinding Command="{Binding MoveCommand}"
+                    Gesture="F6" />
+        <KeyBinding Command="{Binding CreateNewFolderCommand}"
+                    Gesture="F7" />
+        <KeyBinding Command="{Binding RemoveCommand}"
+                    Gesture="F8" />
+    </Window.InputBindings>
+</Window>
