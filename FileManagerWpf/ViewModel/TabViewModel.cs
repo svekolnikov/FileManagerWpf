@@ -6,8 +6,9 @@ using System.Windows;
 using System.Windows.Media;
 using FileManagerWpf.Extensions;
 using FileManagerWpf.Model;
-using FileManagerWpf.Services;
 using FileManagerWpf.View;
+using System.Linq;
+using FileManagerWpf.Services;
 
 namespace FileManagerWpf.ViewModel
 {
@@ -19,27 +20,27 @@ namespace FileManagerWpf.ViewModel
         private Stack<string> _historyForward;
         private string _panelPath;
 
+        private readonly int _tabIndex;
         private FileManager _fileManager;
 
-        public TabViewModel(string path, bool isActive)
+        public TabViewModel( bool isActive, int tabIndex)
         {
-            if (!Directory.Exists(path)) throw new DirectoryNotFoundException(nameof(path));
+            _fileManager = new FileManager(OnChangesInDirectory);
 
-            _fileManager = new FileManager(path, OnChangesInDirectory);
+            UpdateDrivesList();
 
-            CurrentPath = path;
-            PanelPath = path;
+            var defaultPath = Drives[0].Path;
+            _tabIndex = tabIndex;
+            _fileManager.SetWatcherPath(defaultPath);            
+
+            CurrentPath = defaultPath;
+            PanelPath = defaultPath;
             _historyBack = new Stack<string>();
             _historyForward = new Stack<string>();
 
             IsActive = isActive;
-            Items = new ObservableCollection<TabItem>();
-            SelectedItems = new ObservableCollection<TabItem>();
-
-            UpdateDrivesList();            
-
-            SetDirectory(path);
-
+            
+            SetDirectory(defaultPath);
         }
 
         #region Properties
@@ -52,7 +53,7 @@ namespace FileManagerWpf.ViewModel
                 BorderBrush = value ? Brushes.ForestGreen : Brushes.WhiteSmoke;
             }
         }
-        public ObservableCollection<Drive> Drives { get; set; } = new ObservableCollection<Drive>();
+        public ObservableCollection<DriveItem> Drives { get; set; } = new ObservableCollection<DriveItem>();
         public string PanelPath 
         {
             get => _panelPath;
@@ -72,15 +73,15 @@ namespace FileManagerWpf.ViewModel
                 OnPropertyChanged(nameof(BorderBrush));
             }
         }
-        public ObservableCollection<TabItem> Items { get; set; }
-        public ObservableCollection<TabItem> SelectedItems { get; set; }
-        public Drive SelectedDrive { get; set; }
+        public ObservableCollection<IItem> Items { get; set; } = new ObservableCollection<IItem>();
+        public ObservableCollection<IItem> SelectedItems { get; set; } = new ObservableCollection<IItem>();
+        public DriveItem SelectedDriveBase { get; set; }
 
         #endregion
 
-        public void Open(string path, EntityType type)
+        public void Open(string path, ItemType type)
         {
-            if (type == EntityType.Dir)
+            if (type == ItemType.Dir)
             {
                 if (!Directory.Exists(path))
                 {
@@ -140,83 +141,129 @@ namespace FileManagerWpf.ViewModel
             if (dialogView.ShowDialog() == true)
                 _fileManager.CreateNewFile(CurrentPath, dialogView.Answer);
         }
-        public void Rename(TabItem tabItem)
+        public bool CanRename => SelectedItems.Count == 1;
+        public void Rename()
         {
-            var dialogView = new InputDialogView("Rename", "Enter new name:", tabItem.Name);
+            var selectedItem = SelectedItems[0];
 
-            if (dialogView.ShowDialog() == true)
+            if (selectedItem.Type == ItemType.Dir)
             {
-                var name = dialogView.Answer;
-
-                if (tabItem.Type == EntityType.Dir)
+                var dialogView = new InputDialogView("Rename folder", "Enter new folder name:", selectedItem.Name);
+                if (dialogView.ShowDialog() == true)
                 {
-                    _fileManager.RenameFolder(tabItem.Path, name);
-                }
-                else
-                {
-                    _fileManager.RenameFile(tabItem.Path, name + tabItem.Ext);
+                    _fileManager.RenameFolder(selectedItem.Path, dialogView.Answer);
                 }
             }
-            
+            else
+            {
+                var dialogView = new InputDialogView("Rename file", "Enter new file name:", ((FileItem)selectedItem).NameWithExt);
+                if (dialogView.ShowDialog() == true)
+                {
+                    _fileManager.RenameFile(selectedItem.Path, dialogView.Answer);
+                }
+
+            }
         }
-        public void Copy(List<TabItem> items, string dest)
+        public bool CanCopy => SelectedItems.Count > 0;
+        public void Copy(List<IItem> tabItems, string dest)
         {
             MessageBoxResult res = MessageBox
-                .Show($"Copy {items.Count} items to {dest}?", "Copy", 
+                .Show($"Copy {tabItems.Count} items to {dest}?", "Copy", 
                 MessageBoxButton.YesNo, 
                 MessageBoxImage.Question);
 
             if (res == MessageBoxResult.Yes)
             {
-                foreach (var item in items)
+                foreach (var item in tabItems)
                 {
-                    if (item.Type == EntityType.Dir)
-                        _fileManager.CopyFolder(item, dest);
+                    if (item.Type == ItemType.Dir)
+                        _fileManager.CopyFolder(item.Path, dest);
                     else
-                        _fileManager.CopyFile(item, dest);
+                        _fileManager.CopyFile((FileItem)item, dest);
                 }
             }
         }
-
-        public void Move(List<TabItem> tabItems)
+        public bool CanMove => SelectedItems.Count > 0;
+        public void Move(List<IItem> tabItems, string dest)
         {
+            MessageBoxResult res = MessageBox
+                .Show($"Move {tabItems.Count} items to {dest}?", "Move",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (res == MessageBoxResult.Yes)
+            {
+                foreach (var item in tabItems)
+                {
+                    if (item.Type == ItemType.Dir)
+                        _fileManager.MoveFolder((FolderItem)item, dest);
+                    else
+                        _fileManager.MoveFile((FileItem)item, dest);
+                }
+            }
+
         }
-
-        public void Zip(List<TabItem> items)
+        public bool CanZip => SelectedItems.Count == 1;
+        public void Archive()
         {
-            var dialogView = new InputDialogView("Zip", "Enter archive name:", "New archive.zip");
+            var dialogView = new InputDialogView("ArchiveFile", "Enter archive name:", "New archive");
             if (dialogView.ShowDialog() == true)
             {
                 var name = dialogView.Answer;
+                var item = SelectedItems[0];
+                if (item.Type == ItemType.Dir)
+                    _fileManager.ArchiveFolder((FolderItem)item, name, CurrentPath);
+                else
+                    _fileManager.ArchiveFile((FileItem)item, name, CurrentPath);
             }
         }
-        public void Remove(List<TabItem> tabItems)
+        public bool CanRemove => SelectedItems.Count > 0;
+        public void Remove()
         {
+            var selectedItems = SelectedItems.ToList();
+            MessageBoxResult res = MessageBox
+                .Show($"Remove {selectedItems.Count} items?", "Remove",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
             try
             {
-
+                if (res == MessageBoxResult.Yes)
+                {
+                    foreach (var item in selectedItems)
+                    {
+                        if (item.Type == ItemType.Dir)
+                            _fileManager.RemoveFolder(item.Path);
+                        else
+                            _fileManager.RemoveFile(item.Path);
+                    }
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        public void ViewInfo(List<TabItem> selectedItems)
+        public bool CanViewInfo => SelectedItems.Count > 0;
+        public void ViewInfo()
         {
+            var selectedItems = SelectedItems.ToList();
+            var size = _fileManager.GetSize(selectedItems);
+
+            MessageBox.Show($"Size of {selectedItems.Count} items: {size} bytes", "Info",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         #region Private Methods
-
         private void UpdateDrivesList()
         {
             Drives.Clear();
             foreach (var drive in _fileManager.GetDrives())
             {
-                Drives.AddOnUI(drive);
+                Drives.Add(drive);
             }
         }        
-
         private void SetDirectory(string path)
         {
             Items.ClearOnUI();
@@ -237,12 +284,13 @@ namespace FileManagerWpf.ViewModel
             CurrentPath = path;
             _fileManager.SetWatcherPath(path);
         }        
-
+        
         #endregion
 
         private void OnChangesInDirectory()
         {
             SetDirectory(CurrentPath);
         }
+        
     }
 }

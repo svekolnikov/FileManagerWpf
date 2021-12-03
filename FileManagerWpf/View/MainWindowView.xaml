@@ -88,7 +88,7 @@
                         <ListView Grid.Row="0"
                                       Name="drives1"
                                       Background="#F0F0F0"
-                                      SelectedItem="{Binding Tabs[0].SelectedDrive}"
+                                      SelectedItem="{Binding Tabs[0].SelectedDriveBase}"
                                       ItemsSource="{Binding Tabs[0].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -196,7 +196,7 @@
                         <ListView Grid.Row="0"
                                       Name="drives2"
                                       Background="#F0F0F0"
-                                      SelectedItem="{Binding Tabs[1].SelectedDrive}"
+                                      SelectedItem="{Binding Tabs[1].SelectedDriveBase}"
                                       ItemsSource="{Binding Tabs[1].Drives, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -299,7 +299,7 @@
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F2 Rename</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
-                <Label  Padding="3">F3 View</Label>
+                <Label  Padding="3">F3 Info</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
                 <Label  Padding="3">F5 Copy</Label>
                 <Border Background="Gray" Width="1" Margin="5,5" />
