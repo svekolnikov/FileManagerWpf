@@ -83,11 +83,8 @@ namespace FileManagerWpf.ViewModel
         {
             if (type == ItemType.Dir)
             {
-                if (!Directory.Exists(path))
-                {
-                    //TODO Notification Directory does not exist
-                    return;
-                }
+                if (!Directory.Exists(path)) return;
+                
                 _historyForward.Clear();
                 _historyBack.Push(CurrentPath);                
                                
@@ -203,6 +200,9 @@ namespace FileManagerWpf.ViewModel
             }
 
         }
+
+        
+
         public bool CanZip => SelectedItems.Count == 1;
         public void Archive()
         {

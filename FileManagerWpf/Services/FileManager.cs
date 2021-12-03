@@ -90,27 +90,13 @@ namespace FileManagerWpf.Services
         }
         public void CreateNewFolder(string path, string name)
         {
-            try
-            {
-                var pathNewFolder = Path.Combine(path, name);
-                Directory.CreateDirectory(pathNewFolder);
-            }
-            catch (Exception)
-            {
-                throw;
-            }            
+            var pathNewFolder = Path.Combine(path, name);
+            Directory.CreateDirectory(pathNewFolder);
         }
         public void CreateNewFile(string path, string name)
         {
-            try
-            {
-                var pathNewFile = Path.Combine(path, name);
-                File.Create(pathNewFile);
-            }
-            catch (Exception)
-            {
-                throw;
-            }            
+            var pathNewFile = Path.Combine(path, name);
+            File.Create(pathNewFile);
         }
         public void RenameFolder(string path, string newName)
         {
@@ -186,39 +172,20 @@ namespace FileManagerWpf.Services
         }
         public long GetSize(List<IItem> items)
         {
-            long total = 0;
-            foreach (var item in items)
-            {
-                if (item.Type == ItemType.Dir)
-                {
-                    total += GetDirectorySize(item.Path);
-                }
-                else
-                {
-                    total += item.Size;
-                }
-
-                
-            }
-            return total;
+            return items.Sum(item => item.Type == ItemType.Dir
+                ? GetDirectorySize(item.Path)
+                : item.Size);
         }
         public void StartProcess(string path)
         {
             if (!File.Exists(path)) throw new DirectoryNotFoundException();
 
-            try
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(path)
             {
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(path)
-                {
-                    UseShellExecute = true
-                };
-                p.Start();
-            }
-            catch (Exception)
-            {
-                throw;
-            }            
+                UseShellExecute = true
+            };
+            p.Start();
         }       
 
         public void SetWatcherPath(string path)
