@@ -16,21 +16,23 @@ namespace FileManagerWpf.ViewModel
     {
         private Brush _borderBrush = Brushes.WhiteSmoke;
         private bool _isActive;
-        private Stack<string> _historyBack;
-        private Stack<string> _historyForward;
+        private readonly Stack<string> _historyBack;
+        private readonly Stack<string> _historyForward;
         private string _panelPath;
 
-        private readonly int _tabIndex;
-        private FileManager _fileManager;
+        private readonly FileManager _fileManager;
+
+        private readonly ReportService _reportService;
 
         public TabViewModel( bool isActive, int tabIndex)
         {
             _fileManager = new FileManager(OnChangesInDirectory);
+            _reportService = new ReportService(_fileManager);
 
             UpdateDrivesList();
 
             var defaultPath = Drives[0].Path;
-            _tabIndex = tabIndex;
+            SelectedDriveBase = Drives[0];
             _fileManager.SetWatcherPath(defaultPath);            
 
             CurrentPath = defaultPath;
@@ -200,9 +202,7 @@ namespace FileManagerWpf.ViewModel
             }
 
         }
-
         
-
         public bool CanZip => SelectedItems.Count == 1;
         public void Archive()
         {
@@ -255,6 +255,11 @@ namespace FileManagerWpf.ViewModel
                 MessageBoxImage.Information);
         }
 
+        public void BuildReport()
+        {
+            _reportService.GenerateReport(SelectedDriveBase);
+        }
+
         #region Private Methods
         private void UpdateDrivesList()
         {
@@ -291,6 +296,5 @@ namespace FileManagerWpf.ViewModel
         {
             SetDirectory(CurrentPath);
         }
-        
     }
 }
