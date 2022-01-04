@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using FileManagerWpf.Commands;
 using FileManagerWpf.Model;
+using FileManagerWpf.Services;
 
 namespace FileManagerWpf.ViewModel
 {
@@ -38,6 +39,7 @@ namespace FileManagerWpf.ViewModel
             MoveCommand = new RelayCommand(Move, _ => CanMove);
             ZipCommand = new RelayCommand(Zip, _ => CanZip);
             RemoveCommand = new RelayCommand(Remove, _ => CanRemove);
+            BuildReportCommand = new RelayCommand(BuildReport, _ => CanBuildReport);
         }
 
         public List<TabViewModel> Tabs { get; }
@@ -154,6 +156,11 @@ namespace FileManagerWpf.ViewModel
         public ICommand ViewInfoCommand { get; set; }
         public bool CanViewInfo => Tabs[_selectedTab].CanViewInfo;
         public void ViewInfo(object obj) => Tabs[_selectedTab].ViewInfo();
+
+        public ICommand BuildReportCommand { get; set; }
+        public bool CanBuildReport => true;
+
+        public void BuildReport(object obj) => Tabs[_selectedTab].BuildReport();
 
         #endregion
     }

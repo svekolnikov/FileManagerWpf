@@ -40,14 +40,20 @@ namespace FileManagerWpf.Services
         {
             foreach (var drive in DriveInfo.GetDrives())
             {
-                yield return new DriveItem
+                if (drive.IsReady)
                 {
-                    Path = drive.RootDirectory.FullName,
-                    Name = drive.RootDirectory.Name,
-                    Size = drive.TotalSize,
-                    TotalFreeSpace = drive.TotalFreeSpace,
-                    UsedSpace = drive.TotalSize - drive.TotalFreeSpace
-                };
+                    yield return new DriveItem
+                    {
+                        Path = drive.RootDirectory.FullName,
+                        Name = drive.RootDirectory.Name,
+                        VolumeLabel = drive.VolumeLabel,
+                        Size = drive.TotalSize,
+                        TotalFreeSpace = drive.TotalFreeSpace,
+                        UsedSpace = drive.TotalSize - drive.TotalFreeSpace,
+                        DriveFormat = drive.DriveFormat,
+                        DriveType = drive.DriveType,
+                    };
+                }
             }
         }
         public IEnumerable<FolderItem> GetSubDirectories(TabViewModel tabViewModel, string path)

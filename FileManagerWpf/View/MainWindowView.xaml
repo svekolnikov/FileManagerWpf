@@ -65,6 +65,12 @@
                 <Button Style="{StaticResource PanelButton}" Command="{Binding RemoveCommand}">
                     <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Trash"/>
                 </Button>
+
+                <Border Background="Gray" Width="1" Margin="15,5" />
+
+                <Button Style="{StaticResource PanelButton}" Command="{Binding BuildReportCommand}">
+                    <fa:FontAwesome Style="{StaticResource PanelIcon}" Icon="Table"/>
+                </Button>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">
